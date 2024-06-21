@@ -2,15 +2,38 @@ import pandas as pd
 import numpy as np
 import cv2 as cv
 
+
+# Load dataset from CSV and convert to numpy array
+def load_and_preprocess_dataset(csv_file_path, window_length):
+    # Load dataset from CSV file into a pandas DataFrame
+    df = pd.read_csv(csv_file_path)
+
+    # Extract relevant features from DataFrame
+    features = ['Open', 'High', 'Low', 'Close', 'Volume']
+    data = df[features].values
+
+    # Prepare input data with the desired window length
+    input_data = []
+    for i in range(len(data) - window_length + 1):
+        input_data.append(data[i:i+window_length])
+
+    # Convert input data to numpy array
+    input_data = np.array(input_data)
+
+    return input_data
+
 # Loads .csv dataset with 5 columns: Daily open, daily low, daily high, closing price, trading volume
 def load_dataset(dataset_name):
 
-    data = pd.read_csv(dataset_name)
+    # Define columns to extract
+    columns_to_extract = ["Open", "Close", "Low", "High", "Volume"]
+
+    # Load the dataset and extract specific columns
+    data = pd.read_csv(f'datasets/{dataset_name}', usecols=columns_to_extract)
 
     # Drop rows with any null, empty, or compromised data values
     data = data.dropna()
 
-    # Returns data as Pandas dataframe
     return data
 
 def pandas_to_numpy(dataset):
